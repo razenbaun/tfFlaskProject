@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+{{ super() }}
+<p>Логистическая регрессия
+<form action="/p_lab3" method="POST">
+    <p><input type="text" class="form_text" name="list1"> Рост</p>
+    <p><input name="list2" class="form_text" type="text"> Вес</p>
+    <p><input name="list3" class="form_text" type="text"> Размер обуви</p>
+    <p><input name="list4" class="form_text" type="text"> Возраст</p>
+    <input type="submit" class="form_btn" value="Узнать любимый цвет">
+    <label>
+        <p>{{class_model}}</p>
+    </label>
+
+    </p>
+</form>
+<div class="image">
+    <img src="static/media/logic.png" alt="Confusion Matrix Heatmap">
+</div>
+{% endblock %}
