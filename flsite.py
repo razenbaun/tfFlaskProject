@@ -7,7 +7,7 @@ from matrix import get_matrix_iris, get_matrix_beloved_color
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 
-print(tf.keras.__version__)
+# print(tf.keras.__version__)
 
 app = Flask(__name__)
 

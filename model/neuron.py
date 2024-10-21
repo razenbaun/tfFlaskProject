@@ -73,13 +73,13 @@ class OurNeuralNetwork:
                 d_h2_d_w6 = x[2] * deriv_sigmoid(sum_h2)
 
                 # Обновляем веса и пороги
-                # Нейрон h1
+                # Нейрон 1
                 self.w1 -= learn_rate * d_L_d_ypred * d_ypred_d_h1 * d_h1_d_w1
                 self.w2 -= learn_rate * d_L_d_ypred * d_ypred_d_h1 * d_h1_d_w2
                 self.w3 -= learn_rate * d_L_d_ypred * d_ypred_d_h1 * d_h1_d_w3
                 self.b1 -= learn_rate * d_L_d_ypred * d_ypred_d_h1 * deriv_sigmoid(sum_h1)
 
-                # Нейрон h2
+                # Нейрон 2
                 self.w4 -= learn_rate * d_L_d_ypred * d_ypred_d_h2 * d_h2_d_w4
                 self.w5 -= learn_rate * d_L_d_ypred * d_ypred_d_h2 * d_h2_d_w5
                 self.w6 -= learn_rate * d_L_d_ypred * d_ypred_d_h2 * d_h2_d_w6
