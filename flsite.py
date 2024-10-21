@@ -1,8 +1,13 @@
+import os
 import pickle
 import tensorflow as tf
 import numpy as np
 from flask import Flask, render_template, url_for, request, jsonify
 from matrix import get_matrix_iris, get_matrix_beloved_color
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+
+print(tf.keras.__version__)
 
 app = Flask(__name__)
 
@@ -10,10 +15,13 @@ menu = [{"name": "Лаба 1", "url": "p_knn"},
         {"name": "Лаба 2", "url": "p_lab2"},
         {"name": "Лаба 3", "url": "p_lab3"},
         {"name": "Лаба 4", "url": "p_lab4"},
-        {"name": "нейрон", "url": "p_lab5"}
+        {"name": "нейрон", "url": "p_lab5"},
+        {"name": "одежда", "url": "p_lab6"}
         ]
 
 model_class = tf.keras.models.load_model('model/classification_model.h5')
+model_weather = load_model('model/weather_model.h5')
+
 
 loaded_model_knn = pickle.load(open('model/Iris_pickle_file_knn', 'rb'))
 loaded_model_linel = pickle.load(open('model/Iris_pickle_file_jilie', 'rb'))
@@ -96,13 +104,40 @@ def p_lab5():
     if request.method == 'POST':
         X_new = np.array([[float(request.form['list1']),
                            float(request.form['list2']),
-                           float(request.form['list3'])]])  # добавлены квадратные скобки
+                           float(request.form['list3'])]])
         predictions = model_class.predict(X_new)
         print(predictions)
         return render_template('labneiron.html', title="Первый нейрон", menu=menu,
                                class_model="Это: " + {0: "setosa",
                                                       1: "virginica",
                                                       2: "versicolor"}[np.argmax(predictions)])
+
+
+@app.route('/p_lab6', methods=['POST', 'GET'])
+def p_lab6():
+    if request.method == 'GET':
+        return render_template('weatherneuro.html', title="Первый нейрон", menu=menu, class_model='')
+    if request.method == 'POST':
+
+        if 'file' not in request.files:
+            return 'No file part'
+
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+
+        img_path = os.path.join('static', file.filename)
+        file.save(img_path)
+
+        img = image.load_img(img_path, target_size=(28, 28), color_mode='grayscale')
+        img = image.img_to_array(img)
+        img = img.reshape(1, 784)
+        img = img.astype('float32') / 255
+
+        prediction = model_weather.predict(img)
+        predicted_class = np.argmax(prediction)
+        return render_template('weatherneuro.html', title="Первый нейрон", menu=menu,
+                               class_model=predicted_class)
 
 
 @app.route('/api', methods=['get'])

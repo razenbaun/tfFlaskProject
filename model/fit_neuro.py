@@ -21,7 +21,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(3),
     tf.keras.layers.Dense(y_train.shape[1], activation='softmax')
 ])
-
+#magic
 model.compile(optimizer='adam', loss='categorical_crossentropy')
 
 model.fit(X_train, y_train, epochs=300, batch_size=32)
