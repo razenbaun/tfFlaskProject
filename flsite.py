@@ -16,11 +16,14 @@ menu = [{"name": "Лаба 1", "url": "p_knn"},
         {"name": "Лаба 3", "url": "p_lab3"},
         {"name": "Лаба 4", "url": "p_lab4"},
         {"name": "нейрон", "url": "p_lab5"},
-        {"name": "одежда", "url": "p_lab6"}
+        {"name": "одежда", "url": "p_lab6"},
+        {"name": "одежда cnn", "url": "p_lab7"}
         ]
 
 model_class = tf.keras.models.load_model('model/classification_model.h5')
 model_weather = load_model('model/weather_model.h5')
+model_weather_cnn = load_model('model/fashion_model_cnn.h5')
+
 
 
 loaded_model_knn = pickle.load(open('model/Iris_pickle_file_knn', 'rb'))
@@ -136,8 +139,49 @@ def p_lab6():
 
         prediction = model_weather.predict(img)
         predicted_class = np.argmax(prediction)
-        return render_template('weatherneuro.html', title="Первый нейрон", menu=menu,
+        return render_template('weatherneuro.html', title="Одежда", menu=menu,
                                class_model=predicted_class)
+
+
+@app.route('/p_lab7', methods=['POST', 'GET'])
+def p_lab7():
+    class_names = [
+        'Футболка',
+        'шорты',
+        'свитер',
+        'платье',
+        'плащ',
+        'Сандалии',
+        'рубашка',
+        'Кроссовки',
+        'сумка',
+        'Ботинки'
+    ]
+
+    if request.method == 'GET':
+        return render_template('fashion.html', title="fashion", menu=menu, class_model='')
+    if request.method == 'POST':
+
+        if 'file' not in request.files:
+            return 'No file part'
+
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+
+        img_path = os.path.join('static', file.filename)
+        file.save(img_path)
+
+        img = image.load_img(img_path, target_size=(28, 28), color_mode='grayscale')
+        img = image.img_to_array(img)
+        img = np.expand_dims(img, axis=0)
+        img = img.astype('float32') / 255
+
+        prediction = model_weather_cnn.predict(img)
+        predicted_class = np.argmax(prediction)
+        class_model = class_names[predicted_class]
+        return render_template('fashion.html', title="fashion", menu=menu,
+                               class_model=class_model)
 
 
 @app.route('/api', methods=['get'])
