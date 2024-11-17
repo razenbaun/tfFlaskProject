@@ -17,13 +17,14 @@ menu = [{"name": "Лаба 1", "url": "p_knn"},
         {"name": "Лаба 4", "url": "p_lab4"},
         {"name": "нейрон", "url": "p_lab5"},
         {"name": "одежда", "url": "p_lab6"},
-        {"name": "одежда cnn", "url": "p_lab7"}
+        {"name": "одежда cnn", "url": "p_lab7"},
+        {"name": "flowers", "url": "p_lab8"},
         ]
 
 model_class = tf.keras.models.load_model('model/classification_model.h5')
 model_weather = load_model('model/weather_model.h5')
 model_weather_cnn = load_model('model/fashion_model_cnn.h5')
-
+model_flowers_cnn = load_model('model/flowers_4_model.h5')
 
 
 loaded_model_knn = pickle.load(open('model/Iris_pickle_file_knn', 'rb'))
@@ -184,6 +185,37 @@ def p_lab7():
                                class_model=class_model)
 
 
+@app.route('/p_lab8', methods=['POST', 'GET'])
+def p_lab8():
+    class_names = [
+        'human',
+        'women'
+    ]
+    if request.method == 'GET':
+        return render_template('lab8.html', title="human нейрон", menu=menu, class_model='')
+    if request.method == 'POST':
+
+        if 'file' not in request.files:
+            return 'No file part'
+
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+
+        img_path = os.path.join('static', file.filename)
+        file.save(img_path)
+
+        img = image.load_img(img_path, target_size=(180, 180))
+        img = image.img_to_array(img)
+        img = np.expand_dims(img, axis=0)
+        img = img.astype('float32') / 255.0
+
+        prediction = model_flowers_cnn.predict(img)
+        predicted_class = class_names[np.argmax(prediction)]
+        return render_template('lab8.html', title="human нейрон", menu=menu,
+                               class_model=predicted_class)
+
+
 @app.route('/api', methods=['get'])
 def get_sort():
     X_new = np.array([[float(request.args.get('list1')),
@@ -216,12 +248,10 @@ def predict_classification():
     print(input_data)
     # input_data = np.array(input_data.reshape(-1, 1))
 
-    # Предсказание
     predictions = model_class.predict(input_data)
     print(predictions)
     result = {0: "setosa", 1: "virginica", 2: "versicolor"}[np.argmax(predictions)]
     print(result)
-    # меняем кодировку
     app.config['JSON_AS_ASCII'] = False
     return jsonify(ov=str(result))
 
