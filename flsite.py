@@ -24,8 +24,8 @@ menu = [{"name": "Лаба 1", "url": "p_knn"},
 model_class = tf.keras.models.load_model('model/classification_model.h5')
 model_weather = load_model('model/weather_model.h5')
 model_weather_cnn = load_model('model/fashion_model_cnn.h5')
-model_flowers_cnn = load_model('model/flowers_4_model.h5')
-
+# model_flowers_cnn = load_model('model/flowers_4_model.h5')
+model_flowers_cnn = load_model('model/people_classification_transfer.keras')
 
 loaded_model_knn = pickle.load(open('model/Iris_pickle_file_knn', 'rb'))
 loaded_model_linel = pickle.load(open('model/Iris_pickle_file_jilie', 'rb'))
